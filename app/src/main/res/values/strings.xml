@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">ApiTestDemo</string>
+    <string name="play_immediately">立即播放</string>
+</resources>
