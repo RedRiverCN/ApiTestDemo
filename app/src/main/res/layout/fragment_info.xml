@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:overScrollMode="never">
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:descendantFocusability="beforeDescendants"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/video_details_margin_top"
+        android:visibility="visible">
+
+        <TextView
+            android:id="@+id/tv_video_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/card_title_margin"
+            android:layout_marginStart="@dimen/card_title_margin"
+            android:lineSpacingExtra="2dp"
+            android:text="视频标题"
+            android:textColor="@color/font_normal"
+            android:textSize="@dimen/default_big_large_text_size"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/line_height"
+            android:layout_marginTop="8dp"
+            android:background="@color/white_30"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_subtitle1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:layout_marginEnd="@dimen/card_title_margin"
+                android:layout_marginStart="@dimen/card_title_margin"
+                android:layout_marginTop="12dp"
+                android:lineSpacingExtra="2dp"
+                android:text="子标题1"
+                android:textColor="@color/black_alpha_45"
+                android:textSize="@dimen/default_big_text_size"/>
+
+            <TextView
+                android:id="@+id/tv_description1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingEnd="@dimen/default_grow_margin"
+                android:paddingStart="@dimen/default_grow_margin"
+                android:text="简要描述"
+                android:textColor="@color/black_80"
+                android:textSize="@dimen/default_medium_text_size"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/line_height"
+                android:layout_marginTop="8dp"
+                android:background="@color/white_30"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_subtitle2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:layout_marginEnd="@dimen/card_title_margin"
+                android:layout_marginStart="@dimen/card_title_margin"
+                android:layout_marginTop="12dp"
+                android:lineSpacingExtra="2dp"
+                android:text="子标题2"
+                android:textColor="@color/black_alpha_45"
+                android:textSize="@dimen/default_big_text_size"/>
+
+            <TextView
+                android:id="@+id/tv_description2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingEnd="@dimen/default_grow_margin"
+                android:paddingStart="@dimen/default_grow_margin"
+                android:text="简要描述"
+                android:textColor="@color/black_80"
+                android:textSize="@dimen/default_medium_text_size"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/line_height"
+                android:layout_marginTop="8dp"
+                android:background="@color/white_30"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_subtitle3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:layout_marginEnd="@dimen/card_title_margin"
+                android:layout_marginStart="@dimen/card_title_margin"
+                android:layout_marginTop="12dp"
+                android:lineSpacingExtra="2dp"
+                android:text="子标题3"
+                android:textColor="@color/black_alpha_45"
+                android:textSize="@dimen/default_big_text_size"/>
+
+            <TextView
+                android:id="@+id/tv_description3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingEnd="@dimen/default_grow_margin"
+                android:paddingStart="@dimen/default_grow_margin"
+                android:text="简要描述"
+                android:textColor="@color/black_80"
+                android:textSize="@dimen/default_medium_text_size"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/line_height"
+                android:layout_marginTop="8dp"
+                android:background="@color/white_30"/>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+
+</ScrollView>

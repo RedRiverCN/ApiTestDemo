@@ -1,9 +1,0 @@
-package com.red.apitestdemo.base;
-
-/**
- * Created by Red on 2017/6/17.
- */
-
-public enum ActivityLifecycle {
-    OnCreate, OnStart, OnRestart, OnReasume, OnPause, OnStop, OnDestroy
-}

@@ -1,10 +1,13 @@
-package com.red.apitestdemo.module.video;
+package com.red.apitestdemo.module.video.videoDetail;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 
 import com.bumptech.glide.Glide;
 import com.red.apitestdemo.bean.VideoBean;
+import com.red.apitestdemo.bean.VideoDetailsInfo;
+import com.red.apitestdemo.bean.VideoListInfo;
+import com.red.apitestdemo.bean.dbentity.VideoList;
 import com.red.apitestdemo.network.RetrofitHelper;
 
 import io.reactivex.Observable;
@@ -18,9 +21,12 @@ import io.reactivex.annotations.NonNull;
 
 public class VideoModel implements VideoContract.Model {
     @Override
-    public Observable<VideoBean> getVideoInfo(int id) {
-        return RetrofitHelper.getVideoAPI()
-                .getVideo(id);
+    public Observable<VideoDetailsInfo> getVideo(int id) {
+        return RetrofitHelper.getInstance()
+                .getVideoAPI()
+                .getVideoDetailsInfo(id)
+                .compose(RetrofitHelper.getInstance().rxSchedulerHelper());
+                //.compose(RetrofitHelper.getInstance().handleResult());
     }
 
     @Override
@@ -42,9 +48,9 @@ public class VideoModel implements VideoContract.Model {
                     e.onError(new RuntimeException());
                     e.onComplete();
                 }
-
             }
-        });
+        })
+                .compose(RetrofitHelper.getInstance().rxSchedulerHelper());
 
     }
 }

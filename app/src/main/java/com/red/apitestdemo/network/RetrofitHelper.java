@@ -2,25 +2,64 @@ package com.red.apitestdemo.network;
 
 import android.util.Log;
 
-import com.google.gson.GsonBuilder;
+import com.red.apitestdemo.base.request.BaseRetrofit;
 import com.red.apitestdemo.network.api.VideoService;
 import com.red.apitestdemo.network.auxiliary.ApiConstants;
 
-import java.io.File;
 import java.util.concurrent.TimeUnit;
 
-import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
-import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 
-public class RetrofitHelper {
+public class RetrofitHelper extends BaseRetrofit {
 
-    private static OkHttpClient sOkHttpClient = new OkHttpClient();
-    private static GsonConverterFactory sFactory = GsonConverterFactory.create(new GsonBuilder().create());
+    private volatile static RetrofitHelper instance;
+
+    //获取单例
+    public static RetrofitHelper getInstance() {
+        if (instance == null) {
+            synchronized (RetrofitHelper.class) {
+                if (instance == null) {
+                    instance = new RetrofitHelper();
+                }
+            }
+        }
+        return instance;
+    }
+
+    private RetrofitHelper() {
+        super();
+    }
+
+    @Override
+    public OkHttpClient initOkHttp() {
+        //定制OkHttp
+        //配置超时，缓存，日志等
+        OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder();
+        httpClientBuilder.connectTimeout(10, TimeUnit.SECONDS);
+        httpClientBuilder.writeTimeout(20, TimeUnit.SECONDS);
+        httpClientBuilder.readTimeout(20, TimeUnit.SECONDS);
+        httpClientBuilder.retryOnConnectionFailure(true);
+
+        //日志显示级别
+        HttpLoggingInterceptor.Level level = HttpLoggingInterceptor.Level.BODY;
+        //新建log拦截器
+        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(message -> Log.d("network","OkHttp====Message:"+message));
+        loggingInterceptor.setLevel(level);
+        //OkHttp进行添加拦截器loggingInterceptor
+        httpClientBuilder.addInterceptor(loggingInterceptor);
+
+        return httpClientBuilder.build();
+    }
+
+    /**
+     * 获取各种api服务
+     */
+    public VideoService getVideoAPI(){
+        return getApiService(VideoService.class, ApiConstants.VIDEO_BASE_URL);
+    }
+
 /*
     设置OkHttpClient
     static {
@@ -53,45 +92,4 @@ public class RetrofitHelper {
         }
     }
 */
-
-    private static OkHttpClient getOkHttpClient() {
-        //日志显示级别
-        HttpLoggingInterceptor.Level level= HttpLoggingInterceptor.Level.BODY;
-        //新建log拦截器
-        HttpLoggingInterceptor loggingInterceptor=new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
-            @Override
-            public void log(String message) {
-                Log.d("zcb","OkHttp====Message:"+message);
-            }
-        });
-        loggingInterceptor.setLevel(level);
-        //定制OkHttp
-        OkHttpClient.Builder httpClientBuilder = new OkHttpClient
-                .Builder();
-        //OkHttp进行添加拦截器loggingInterceptor
-        httpClientBuilder.addInterceptor(loggingInterceptor);
-        return httpClientBuilder.build();
-    }
-
-    private static <T> T createApi(Class<T> clazz, String baseUrl) {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .client(getOkHttpClient())
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(sFactory)
-                .build();
-
-        return retrofit.create(clazz);
-    }
-
-
-    public static VideoService getVideoAPI(){
-        return createApi(VideoService.class, ApiConstants.VIDEO_BASE_URL);
-    }
-
-    //添加其他的api
-    public static VideoService getOtherAPI(){
-        return createApi(VideoService.class, ApiConstants.VIDEO_BASE_URL);
-    }
-
 }

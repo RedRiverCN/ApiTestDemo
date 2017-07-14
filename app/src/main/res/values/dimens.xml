@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="appbar_parallax_max_height">236dp</dimen>
+    <dimen name="appbar_parallax_max_height">200dp</dimen>
     <dimen name="head_image_bg_height">128dp</dimen>
 
     <!--common text size-->
@@ -30,4 +30,7 @@
     <dimen name="tab_layout_default_height">48dp</dimen>
 
     <dimen name="line_height">1dp</dimen>
+    <dimen name="video_details_margin_top">12dp</dimen>
+    <dimen name="card_title_margin">6dp</dimen>
+    <dimen name="text_margin">8dp</dimen>
 </resources>

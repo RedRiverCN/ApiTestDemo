@@ -1,7 +1,9 @@
-package com.red.apitestdemo.module.video;
+package com.red.apitestdemo.module.video.videoDetail;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.red.apitestdemo.base.BaseModel;
 import com.red.apitestdemo.base.BasePresenter;
@@ -25,9 +27,12 @@ public class VideoContract {
     public interface View extends BaseView {
         void onLoading();
         void onFinish();
-        void onSuccess(VideoBean videoBean);
+        void onSuccess(String videoURL, String title);
         void onError(String error);
         void onImgLoad(Bitmap bitmap);
+
+        void playImmediately();
+
         int getId();
         void setId(int id);
     }
@@ -37,5 +42,10 @@ public class VideoContract {
         public abstract void getVideoImg(Context context, String imgUrl);
 
         public abstract void playImmediately();
+        public abstract void downloadFiles(@NonNull final String url,
+                                           @NonNull final String saveName,
+                                           @Nullable final String savePath);
+
+        public abstract void viewOnDestroy();
     }
 }

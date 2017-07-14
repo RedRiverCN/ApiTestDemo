@@ -6,12 +6,12 @@ import android.content.Context;
  * Created by Red on 2017/6/17.
  */
 
-public abstract class BasePresenter<T, E> {
+public abstract class BasePresenter<V, M> {
     public Context mContext;
-    public T mView;
-    public E mModel;
+    public V mView;
+    public M mModel;
 
-    public void setViewAndModel(T view, E model) {
+    public void setViewAndModel(V view, M model) {
         this.mView = view;
         this.mModel = model;
     }
