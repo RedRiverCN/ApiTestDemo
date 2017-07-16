@@ -35,7 +35,7 @@ public class VideoInfoFragment extends BaseFragment<VideoInfoPresenter, VideoInf
 
 
     private int mId;
-    private VideoDetailsInfo.DataBean mVideoDetailsInfo;
+    private VideoDetailsInfo.TabBean mVideoDetailsInfo;
 
     public static VideoInfoFragment newInstance(int id) {
         VideoInfoFragment fragment = new VideoInfoFragment();

@@ -61,6 +61,11 @@ public class VideoDetailsInfo {
         private String imgurl;//缩略图地址
         @SerializedName("mp4url")
         private String mp4url;//视频地址
+        private String category;//所属类别
+        private String stage;//阶段
+
+        public VideoBean() {
+        }
 
 
         public String getId() {
@@ -101,6 +106,22 @@ public class VideoDetailsInfo {
 
         public void setMp4url(String mp4url) {
             this.mp4url = mp4url;
+        }
+
+        public String getCategory() {
+            return category;
+        }
+
+        public void setCategory(String category) {
+            this.category = category;
+        }
+
+        public String getStage() {
+            return stage;
+        }
+
+        public void setStage(String stage) {
+            this.stage = stage;
         }
     }
 

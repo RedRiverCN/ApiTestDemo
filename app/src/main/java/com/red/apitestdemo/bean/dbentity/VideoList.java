@@ -24,10 +24,10 @@ public class VideoList {
     private String memberThumb;//缩略图地址
     private String memberCategory;//所属类别
     private String memberStage;//阶段
-    private String memberVideo;//视频地址
+    private String memberVideo;//视频完整网络地址
     private int hasVideoCache;//视频缓存状态
     private int hasThumbCache;//图片缓存状态
-    private String memberDetailData;//详情数据
+    private String memberDetailData;//详情数据示例
     @Generated(hash = 133385387)
     public VideoList(Long id, int memberId, String memberTitle, String memberTime,
             String memberThumb, String memberCategory, String memberStage,

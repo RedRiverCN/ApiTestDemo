@@ -2,11 +2,11 @@ package com.red.apitestdemo.module.video.videoDetail;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -97,9 +97,6 @@ public class VideoDetailsActivity extends BaseActivity<VideoPresenter,VideoModel
     public void onSuccess(String videoURL, String title) {
 
         mVideoPlayer.setUp(videoURL, JCVideoPlayerStandard.SCREEN_LAYOUT_NORMAL, title);
-        //!SingleTaskDownload.createDownloadTask(videoBean.getMp4url(), null).start();
-        //!Toast.makeText(VideoDetailsActivity.this, "开始下载了", Toast.LENGTH_SHORT).show();
-
     }
 
     @Override
@@ -108,26 +105,30 @@ public class VideoDetailsActivity extends BaseActivity<VideoPresenter,VideoModel
         Toast.makeText(VideoDetailsActivity.this, error, Toast.LENGTH_SHORT).show();
     }
 
-    @Override
-    public void onImgLoad(Bitmap bitmap) {
-        //设置视频缩略图
-        mVideoPlayer.thumbImageView.setImageBitmap(bitmap);
-    }
-
 
     @Override
     public void playImmediately() {
         mVideoPlayer.startButton.performClick();//模拟用户点击开始按钮，NORMAL状态下点击开始播放视频，播放中点击暂停视频
 
+    }
 
+    @Override
+    public ImageView getThumbViewHolder() {
+        return mVideoPlayer.thumbImageView;
     }
 
     @Override
     public void onClick(android.view.View view) {
         switch (view.getId()) {
-            case 1:
+            case R.id.progressBar:
+                mPresenter.startDownload();
                 break;
         }
+    }
+
+    @Override
+    public void setProgressBar(int progress) {
+        progressBar.setProgress(progress);
     }
 
     @Override

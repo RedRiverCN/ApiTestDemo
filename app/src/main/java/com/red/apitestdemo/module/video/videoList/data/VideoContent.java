@@ -37,7 +37,6 @@ public class VideoContent {
 
     private VideoContent(Context context) {
         mItems = new ArrayList<>();
-        //！1.查询数据库有无缓存数据，有则读，否则联网加载
 
 
     }

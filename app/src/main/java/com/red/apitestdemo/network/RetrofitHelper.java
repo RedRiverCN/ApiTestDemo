@@ -60,6 +60,8 @@ public class RetrofitHelper extends BaseRetrofit {
         return getApiService(VideoService.class, ApiConstants.VIDEO_BASE_URL);
     }
 
+
+
 /*
     设置OkHttpClient
     static {

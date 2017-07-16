@@ -13,7 +13,7 @@ public class VideoInfoModel implements VideoInfoContract.VideoInfoModel{
 
     @Override
     public Observable<VideoDetailsInfo> getVideoDetailsInfo(int id) {
-        return RetrofitHelper.getInstance().getVideoInfoAPI()
+        return RetrofitHelper.getInstance().getVideoAPI()
                 .getVideoDetailsInfo(id);
     }
 

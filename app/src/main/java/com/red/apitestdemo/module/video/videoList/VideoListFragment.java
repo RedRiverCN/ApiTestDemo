@@ -1,6 +1,7 @@
 package com.red.apitestdemo.module.video.videoList;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,13 +12,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.facebook.drawee.view.SimpleDraweeView;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.red.apitestdemo.R;
+import com.red.apitestdemo.bean.VideoListInfo;
 import com.red.apitestdemo.bean.dbentity.VideoList;
 import com.red.apitestdemo.bean.VideoListDao;
 import com.red.apitestdemo.db.VideoListHelper;
+import com.red.apitestdemo.module.video.videoDetail.VideoDetailsActivity;
 import com.red.apitestdemo.module.video.videoList.data.VideoContent;
 import com.red.apitestdemo.module.video.videoList.data.VideoItem;
 import com.red.apitestdemo.network.RetrofitHelper;
@@ -25,6 +31,11 @@ import com.red.apitestdemo.utils.ConstantUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import io.reactivex.disposables.CompositeDisposable;
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
+
+import static com.red.apitestdemo.utils.ConstantUtil.SDPATH;
 
 /**
  * A fragment representing a list of Items.
@@ -40,6 +51,7 @@ public class VideoListFragment extends Fragment {
     private String mCategory;
     private String mStage;
 
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private MyItemRecyclerViewAdapter mAdapter;
     private RecyclerView mRecyclerView;
     private VideoListHelper mHelper;
@@ -108,19 +120,19 @@ public class VideoListFragment extends Fragment {
                 .where(VideoListDao.Properties.MemberStage.eq(mStage))
                 .list();
 
-        //有缓存
+        //有记录
         if (dbVideoLists.size() > 0) {
             List<VideoItem> VideoItems = new ArrayList<>();;
-
             //加载数据库的数据
             for (VideoList s : dbVideoLists) {
                 int videoId = s.getMemberId();
                 String title = s.getMemberTitle();
                 String time = s.getMemberTime();
-                Uri thumbUri = Uri.parse(ConstantUtil.SDPATH + ConstantUtil.THUMB_TEMP_DIR + videoId);
+                Uri thumbUri = Uri.parse(SDPATH + ConstantUtil.THUMB_TEMP_DIR + videoId);
+                String category = s.getMemberCategory();
+                String stage = s.getMemberStage();
 
-
-                VideoItem item = new VideoItem(videoId, thumbUri, title, time);
+                VideoItem item = new VideoItem(videoId, thumbUri, title, time, category, stage);
 
                 Log.d("db: ", "ITEM: "+ videoId + ", " + thumbUri + ", " + title + ", " + time);
 
@@ -130,33 +142,55 @@ public class VideoListFragment extends Fragment {
 
         } else {
             toRefreshDataFromNetwork();
+            updateDb();
+        }
+    }
+
+    private void updateDb() {
+        List<VideoItem> videoItems = VideoContent.getInstance(getActivity()).getItems();
+        for (VideoItem s : videoItems) {
+            VideoList videoList = new VideoList();
+            videoList.setId(mHelper.count()+1);
+            videoList.setMemberId(s.getVideoId());
+            videoList.setMemberThumb(s.getThumbUri().getPath());
+            videoList.setMemberTitle(s.getTitle());
+            videoList.setMemberCategory(s.getCategory());
+            videoList.setMemberStage(s.getStage());
+            videoList.setMemberTime(s.getTime());
+            videoList.setHasVideoCache(0);
+
+            mHelper.save(videoList);
         }
     }
 
     private void toRefreshDataFromNetwork() {
         RetrofitHelper.getInstance()
                 .getVideoAPI()
-                .getVideo(id)
-                .compose(RetrofitHelper.getInstance().rxSchedulerHelper());
-        mModel.getVideoInfo(mView.getId())
+                .getVideoListInfo(mCategory, mStage)
+                .compose(RetrofitHelper.getInstance().rxSchedulerHelper())
                 .doOnSubscribe(disposable -> compositeDisposable.add(disposable))
-                .doOnNext(videoBean -> {
-                    //判断本地有无该视频的缓存,文件名为视频id
-                    File file = new File(SDPATH + TEMP + mView.getId());
-                    String videoUrl;
-                    if (file.canRead()) {
-                        videoUrl = file.getAbsolutePath();
-                    } else {
-                        videoUrl = ApiConstants.VIDEO_BASE_URL + "demo/" + videoBean.getMp4url();
-                    }
-                    //加载缩略图
-                    String imgUrl = ApiConstants.VIDEO_BASE_URL + "demo/" + videoBean.getImgurl();//修正服务器URL
-                    getVideoImg(mContext,imgUrl);
+                .doOnNext(videoListInfo -> {
+                    List<VideoListInfo.ResultBean> results = videoListInfo.getResult();
 
-                    mView.onSuccess(videoUrl, videoBean.getTitle());
+                    List<VideoItem> videoItems = new ArrayList<>();;
+                    for (VideoListInfo.ResultBean s : results) {
+                        int videoId = Integer.parseInt(s.getId());
+                        String title = s.getTitle();
+                        String time = s.getOntime();
+                        String category = s.getCategory();
+                        String stage = s.getStage();
+                        Uri thumbUri = Uri.parse(s.getCover_url());
+
+
+                        VideoItem item = new VideoItem(videoId, thumbUri, title, time, category, stage);
+
+                        videoItems.add(item);
+                    }
+                    VideoContent.getInstance(getActivity()).setItems(videoItems);
+
                 })
-                .doOnError(throwable -> mView.onError("网络请求出错"))
-                .doOnComplete(() -> mView.onFinish())
+                .doOnError(throwable -> Toast.makeText(getActivity(), "网络请求出错", Toast.LENGTH_SHORT).show())
+                .doOnComplete(() -> Toast.makeText(getActivity(), "请求完毕", Toast.LENGTH_SHORT).show())
                 .subscribe();
     }
 
@@ -177,7 +211,7 @@ public class VideoListFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Log.d("sdcard dir========", "onViewCreated: "+ ConstantUtil.SDPATH);
+        Log.d("sdcard dir========", "onViewCreated: "+ SDPATH);
     }
 
 
@@ -222,27 +256,35 @@ public class VideoListFragment extends Fragment {
     }
 
     private class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        private SimpleDraweeView mDraweeView;
+        private ImageView mImageView;
         private TextView mTitleView;
         private VideoItem mItem;
 
         ViewHolder(View view) {
             super(view);
-            mDraweeView = (SimpleDraweeView) view.findViewById(R.id.course_image_view);
+            mImageView = (ImageView) view.findViewById(R.id.course_image_view);
             mTitleView = (TextView) view.findViewById(R.id.tv_course_title);
         }
 
         public void bindItem(VideoItem item) {
             mItem = item;
-            mDraweeView.setImageURI(mItem.getThumbUri());
+            //mImageView.setImageURI(mItem.getThumbUri());
             mTitleView.setText(mItem.getTitle());
+            Glide.with(getActivity())
+                    .load(mItem.getThumbUri().getPath())
+                    .placeholder(R.drawable.loading)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .centerCrop()
+                    .bitmapTransform(new RoundedCornersTransformation(getActivity(), 30, 0, RoundedCornersTransformation.CornerType.ALL))//转成圆角
+                    .crossFade(800)//交叉淡入
+                    .into(mImageView);
         }
 
         @Override
         public void onClick(View v) {
-//            //指定视频id，有无缓存
-//            Intent intent = VideoDetailsActivity.newIntent(getActivity(), mItem.getVideoId(), hasVideoCache);
-//            startActivity(intent);
+            //指定视频id
+            Intent intent = VideoDetailsActivity.newIntent(getActivity(), mItem.getVideoId());
+            startActivity(intent);
         }
     }
 }
